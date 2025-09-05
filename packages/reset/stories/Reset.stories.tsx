@@ -512,3 +512,338 @@ export const MultiSyncExample: ExampleStory = {
     </div>
   ),
 };
+
+// 중첩된 Reset 컴포넌트 예제
+export const NestedResetExample: ExampleStory = {
+  render: () => (
+    <div style={{ padding: "20px" }}>
+      <h2>중첩된 Reset 컴포넌트 예제</h2>
+      <p>Reset 컴포넌트 안에 다른 Reset 컴포넌트가 중첩된 경우의 동작을 테스트합니다.</p>
+      
+      {/* 중첩된 Reset 예제 */}
+      <Reset id="parent-container">
+        {(parentReset, parentKey) => (
+          <div key={parentKey} style={{ 
+            border: "3px solid #28a745", 
+            padding: "20px", 
+            margin: "15px", 
+            borderRadius: "10px",
+            backgroundColor: "#d4edda"
+          }}>
+            <h3 style={{ margin: "0 0 15px 0", color: "#155724" }}>Parent Container (Key: {parentKey})</h3>
+            <p style={{ margin: "5px 0" }}>이 컨테이너 안에 여러 개의 중첩된 Reset 컴포넌트들이 있습니다.</p>
+            
+            <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+              <button 
+                onClick={parentReset}
+                style={{ 
+                  padding: "10px 20px", 
+                  backgroundColor: "#28a745", 
+                  color: "white", 
+                  border: "none", 
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontWeight: "bold"
+                }}
+              >
+                Parent Reset
+              </button>
+              <button 
+                onClick={() => triggerSync("parent-container")}
+                style={{ 
+                  padding: "10px 20px", 
+                  backgroundColor: "#17a2b8", 
+                  color: "white", 
+                  border: "none", 
+                  borderRadius: "5px",
+                  cursor: "pointer"
+                }}
+              >
+                Parent Sync
+              </button>
+            </div>
+
+            {/* 첫 번째 중첩된 Reset */}
+            <Reset id="nested-child1" groups={["nested-group"]}>
+              {(child1Reset, child1Key) => (
+                <div key={child1Key} style={{ 
+                  border: "2px solid #007bff", 
+                  padding: "15px", 
+                  margin: "10px 0", 
+                  borderRadius: "8px",
+                  backgroundColor: "#e7f3ff"
+                }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: "#004085" }}>Nested Child 1 (Key: {child1Key})</h4>
+                  <Counter reset={child1Reset} label="Child 1 Counter" />
+                  
+                  <div style={{ marginTop: "10px" }}>
+                    <button 
+                      onClick={child1Reset}
+                      style={{ 
+                        padding: "8px 16px", 
+                        backgroundColor: "#007bff", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        marginRight: "8px"
+                      }}
+                    >
+                      Child 1 Reset
+                    </button>
+                    <button 
+                      onClick={() => resetByGroup("nested-group")}
+                      style={{ 
+                        padding: "8px 16px", 
+                        backgroundColor: "#6f42c1", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      Group Reset
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Reset>
+
+            {/* 두 번째 중첩된 Reset */}
+            <Reset id="nested-child2" groups={["nested-group", "all-nested"]}>
+              {(child2Reset, child2Key) => (
+                <div key={child2Key} style={{ 
+                  border: "2px solid #fd7e14", 
+                  padding: "15px", 
+                  margin: "10px 0", 
+                  borderRadius: "8px",
+                  backgroundColor: "#fff3e0"
+                }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: "#8b4513" }}>Nested Child 2 (Key: {child2Key})</h4>
+                  <Counter reset={child2Reset} label="Child 2 Counter" />
+                  
+                  <div style={{ marginTop: "10px" }}>
+                    <button 
+                      onClick={child2Reset}
+                      style={{ 
+                        padding: "8px 16px", 
+                        backgroundColor: "#fd7e14", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        marginRight: "8px"
+                      }}
+                    >
+                      Child 2 Reset
+                    </button>
+                    <button 
+                      onClick={() => resetByGroup("all-nested")}
+                      style={{ 
+                        padding: "8px 16px", 
+                        backgroundColor: "#dc3545", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      All Nested Reset
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Reset>
+
+            {/* 세 번째 중첩된 Reset - 동기화 포함 */}
+            <Reset id="nested-child3" syncWith={["parent-container"]}>
+              {(child3Reset, child3Key) => (
+                <div key={child3Key} style={{ 
+                  border: "2px solid #e83e8c", 
+                  padding: "15px", 
+                  margin: "10px 0", 
+                  borderRadius: "8px",
+                  backgroundColor: "#fce4ec"
+                }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: "#721c24" }}>Nested Child 3 (Key: {child3Key}) - Parent와 동기화</h4>
+                  <Counter reset={child3Reset} label="Child 3 Counter (Parent Synced)" />
+                  
+                  <div style={{ marginTop: "10px" }}>
+                    <button 
+                      onClick={child3Reset}
+                      style={{ 
+                        padding: "8px 16px", 
+                        backgroundColor: "#e83e8c", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      Child 3 Reset
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Reset>
+
+            {/* 깊은 중첩 예제 */}
+            <Reset id="deeply-nested" groups={["deep-nested"]}>
+              {(deepReset, deepKey) => (
+                <div key={deepKey} style={{ 
+                  border: "2px solid #20c997", 
+                  padding: "15px", 
+                  margin: "10px 0", 
+                  borderRadius: "8px",
+                  backgroundColor: "#d1ecf1"
+                }}>
+                  <h4 style={{ margin: "0 0 10px 0", color: "#0c5460" }}>Deeply Nested (Key: {deepKey})</h4>
+                  
+                  {/* 3단계 중첩 */}
+                  <Reset id="level3-nested">
+                    {(level3Reset, level3Key) => (
+                      <div key={level3Key} style={{ 
+                        border: "1px solid #6c757d", 
+                        padding: "10px", 
+                        margin: "8px 0", 
+                        borderRadius: "5px",
+                        backgroundColor: "#f8f9fa"
+                      }}>
+                        <h5 style={{ margin: "0 0 8px 0" }}>Level 3 Nested (Key: {level3Key})</h5>
+                        <Counter reset={level3Reset} label="Level 3 Counter" />
+                        
+                        <div style={{ marginTop: "8px" }}>
+                          <button 
+                            onClick={level3Reset}
+                            style={{ 
+                              padding: "6px 12px", 
+                              backgroundColor: "#6c757d", 
+                              color: "white", 
+                              border: "none", 
+                              borderRadius: "3px",
+                              cursor: "pointer",
+                              fontSize: "12px"
+                            }}
+                          >
+                            Level 3 Reset
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </Reset>
+                  
+                  <div style={{ marginTop: "10px" }}>
+                    <button 
+                      onClick={deepReset}
+                      style={{ 
+                        padding: "8px 16px", 
+                        backgroundColor: "#20c997", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                        marginRight: "8px"
+                      }}
+                    >
+                      Deep Reset
+                    </button>
+                    <button 
+                      onClick={() => resetByGroup("deep-nested")}
+                      style={{ 
+                        padding: "8px 16px", 
+                        backgroundColor: "#6f42c1", 
+                        color: "white", 
+                        border: "none", 
+                        borderRadius: "4px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      Deep Group Reset
+                    </button>
+                  </div>
+                </div>
+              )}
+            </Reset>
+          </div>
+        )}
+      </Reset>
+
+      {/* 중첩 리셋 컨트롤 패널 */}
+      <div style={{ 
+        backgroundColor: "#fff3cd", 
+        padding: "15px", 
+        margin: "20px 0", 
+        borderRadius: "8px",
+        border: "1px solid #ffeaa7"
+      }}>
+        <h3 style={{ margin: "0 0 15px 0", color: "#856404" }}>중첩 Reset 컨트롤</h3>
+        
+        <div style={{ marginBottom: "15px" }}>
+          <h4 style={{ margin: "0 0 8px 0" }}>개별 중첩 컴포넌트 리셋:</h4>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <button onClick={() => resetById("parent-container")} style={buttonStyle}>
+              Parent Container
+            </button>
+            <button onClick={() => resetById("nested-child1")} style={buttonStyle}>
+              Nested Child 1
+            </button>
+            <button onClick={() => resetById("nested-child2")} style={buttonStyle}>
+              Nested Child 2
+            </button>
+            <button onClick={() => resetById("nested-child3")} style={buttonStyle}>
+              Nested Child 3
+            </button>
+            <button onClick={() => resetById("deeply-nested")} style={buttonStyle}>
+              Deeply Nested
+            </button>
+            <button onClick={() => resetById("level3-nested")} style={buttonStyle}>
+              Level 3 Nested
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <h4 style={{ margin: "0 0 8px 0" }}>그룹 리셋:</h4>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <button 
+              onClick={() => resetByGroup("nested-group")} 
+              style={{ ...buttonStyle, backgroundColor: "#6f42c1" }}
+            >
+              Nested Group (Child 1, 2)
+            </button>
+            <button 
+              onClick={() => resetByGroup("all-nested")} 
+              style={{ ...buttonStyle, backgroundColor: "#dc3545" }}
+            >
+              All Nested (Child 2)
+            </button>
+            <button 
+              onClick={() => resetByGroup("deep-nested")} 
+              style={{ ...buttonStyle, backgroundColor: "#20c997" }}
+            >
+              Deep Nested
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ 
+        backgroundColor: "#d1ecf1", 
+        padding: "15px", 
+        margin: "20px 0", 
+        borderRadius: "8px",
+        border: "1px solid #bee5eb"
+      }}>
+        <h3 style={{ margin: "0 0 10px 0", color: "#0c5460" }}>중첩 Reset 테스트 방법:</h3>
+        <ol style={{ margin: "0", paddingLeft: "20px" }}>
+          <li><strong>Parent Reset</strong>: 전체 컨테이너와 모든 중첩된 컴포넌트들이 리셋됩니다.</li>
+          <li><strong>개별 Child Reset</strong>: 각 중첩된 컴포넌트만 개별적으로 리셋됩니다.</li>
+          <li><strong>Group Reset</strong>: 특정 그룹에 속한 중첩된 컴포넌트들이 함께 리셋됩니다.</li>
+          <li><strong>동기화 테스트</strong>: Child 3은 Parent와 동기화되어 Parent가 리셋되면 함께 리셋됩니다.</li>
+          <li><strong>깊은 중첩</strong>: 3단계 중첩된 컴포넌트의 동작을 확인할 수 있습니다.</li>
+          <li><strong>Key 값 확인</strong>: 각 컴포넌트의 Key 값이 리셋 시 증가하는지 확인하세요.</li>
+        </ol>
+      </div>
+    </div>
+  ),
+};
