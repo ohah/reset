@@ -3,6 +3,7 @@ import mitt from "mitt";
 type Events = {
   reset: string;
   resetGroup: string;
+  sync: string;
 };
 
 const bus = mitt<Events>();
@@ -33,4 +34,22 @@ export const subscribeResetGroup = <T extends string>(groupId: T, cb: () => void
   };
   bus.on("resetGroup", handler);
   return () => bus.off("resetGroup", handler);
+};
+
+// 동기화 트리거 (특정 컴포넌트가 리렌더링될 때 다른 컴포넌트들도 함께 리렌더링)
+export const triggerSync = <T extends string>(id: T) => {
+  bus.emit("sync", id);
+};
+
+// 동기화 구독 (다른 컴포넌트의 리렌더링을 감지)
+export const subscribeSync = <T extends string>(id: T, cb: () => void) => {
+  const handler = (targetId: string) => {
+    if (targetId === id) {
+      cb();
+    }
+  };
+  bus.on("sync", handler);
+  return () => {    
+    bus.off("sync", handler);
+  };
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { Reset, resetById, resetByGroup } from '../src';
+import { Reset, resetById, resetByGroup, triggerSync } from '../src';
 
 // Counter 컴포넌트 예제
 function Counter({ reset, label }: { reset: () => void; label: string }) {
@@ -335,6 +335,179 @@ resetById("counter1");`}
 resetByGroup("form");  // form 그룹의 모든 컴포넌트 리셋
 resetByGroup("all");   // all 그룹의 모든 컴포넌트 리셋`}
         </pre>
+      </div>
+    </div>
+  ),
+};
+
+// 동기화 리렌더링 예제
+export const SyncExample: ExampleStory = {
+  render: () => (
+    <div style={{ padding: "20px" }}>
+      <h2>동기화 리렌더링 예제</h2>
+      <p>특정 컴포넌트가 리렌더링될 때 다른 컴포넌트들도 함께 리렌더링됩니다.</p>
+      
+      {/* 마스터 컴포넌트 */}
+      <Reset id="master">
+        {(reset, key) => (
+          <div key={key} style={{ 
+            border: "2px solid #007acc", 
+            padding: "15px", 
+            margin: "10px", 
+            borderRadius: "8px",
+            backgroundColor: "#e3f2fd"
+          }}>
+            <h3 style={{ margin: "0 0 10px 0" }}>Master Component</h3>
+            <p style={{ margin: "5px 0" }}>이 컴포넌트가 리렌더링되면 다른 컴포넌트들도 함께 리렌더링됩니다.</p>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button 
+                onClick={reset}
+                style={{ 
+                  padding: "8px 16px", 
+                  backgroundColor: "#007acc", 
+                  color: "white", 
+                  border: "none", 
+                  borderRadius: "4px",
+                  cursor: "pointer"
+                }}
+              >
+                Master Reset
+              </button>
+              <button 
+                onClick={() => triggerSync("master")}
+                style={{ 
+                  padding: "8px 16px", 
+                  backgroundColor: "#28a745", 
+                  color: "white", 
+                  border: "none", 
+                  borderRadius: "4px",
+                  cursor: "pointer"
+                }}
+              >
+                Trigger Sync
+              </button>
+            </div>
+          </div>
+        )}
+      </Reset>
+
+      {/* 동기화된 컴포넌트들 */}
+      <Reset id="slave1" syncWith={["master"]}>
+        {(reset, key) => (
+          <Counter key={key} reset={reset} label="Slave 1 (Counter)" />
+        )}
+      </Reset>
+
+      <Reset id="slave2" syncWith={["master"]}>
+        {(reset, key) => (
+          <Counter key={key} reset={reset} label="Slave 2 (Counter)" />
+        )}
+      </Reset>
+
+      <Reset id="slave3" syncWith={["master"]}>
+        {(reset, key) => (
+          <Counter key={key} reset={reset} label="Slave 3 (Counter)" />
+        )}
+      </Reset>
+
+      {/* 독립적인 컴포넌트 */}
+      <Reset id="independent">
+        {(reset, key) => (
+          <Counter key={key} reset={reset} label="Independent (Not Synced)" />
+        )}
+      </Reset>
+
+      <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+        <h3>사용법:</h3>
+        <ul>
+          <li><strong>Master Reset</strong>: 마스터 컴포넌트만 리셋</li>
+          <li><strong>Trigger Sync</strong>: 마스터 컴포넌트의 리렌더링을 트리거하여 모든 동기화된 컴포넌트들도 함께 리렌더링</li>
+          <li><strong>Slave Reset</strong>: 각 슬레이브 컴포넌트 개별 리셋</li>
+        </ul>
+      </div>
+    </div>
+  ),
+};
+
+// 다중 동기화 예제
+export const MultiSyncExample: ExampleStory = {
+  render: () => (
+    <div style={{ padding: "20px" }}>
+      <h2>다중 동기화 예제</h2>
+      <p>여러 컴포넌트 간의 복잡한 동기화 관계를 보여줍니다.</p>
+      
+      {/* 컴포넌트 A */}
+      <Reset id="component-a">
+        {(reset, key) => (
+          <div key={key} style={{ 
+            border: "2px solid #ff6b6b", 
+            padding: "15px", 
+            margin: "10px", 
+            borderRadius: "8px",
+            backgroundColor: "#ffe6e6"
+          }}>
+            <h3 style={{ margin: "0 0 10px 0" }}>Component A</h3>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button 
+                onClick={reset}
+                style={{ 
+                  padding: "8px 16px", 
+                  backgroundColor: "#ff6b6b", 
+                  color: "white", 
+                  border: "none", 
+                  borderRadius: "4px",
+                  cursor: "pointer"
+                }}
+              >
+                Reset A
+              </button>
+              <button 
+                onClick={() => triggerSync("component-a")}
+                style={{ 
+                  padding: "8px 16px", 
+                  backgroundColor: "#28a745", 
+                  color: "white", 
+                  border: "none", 
+                  borderRadius: "4px",
+                  cursor: "pointer"
+                }}
+              >
+                Sync A
+              </button>
+            </div>
+          </div>
+        )}
+      </Reset>
+
+      {/* 컴포넌트 B - A와 동기화 */}
+      <Reset id="component-b" syncWith={["component-a"]}>
+        {(reset, key) => (
+          <Counter key={key} reset={reset} label="Component B (Synced with A)" />
+        )}
+      </Reset>
+
+      {/* 컴포넌트 C - A와 B 모두와 동기화 */}
+      <Reset id="component-c" syncWith={["component-a", "component-b"]}>
+        {(reset, key) => (
+          <Counter key={key} reset={reset} label="Component C (Synced with A & B)" />
+        )}
+      </Reset>
+
+      {/* 컴포넌트 D - B와만 동기화 */}
+      <Reset id="component-d" syncWith={["component-b"]}>
+        {(reset, key) => (
+          <Counter key={key} reset={reset} label="Component D (Synced with B only)" />
+        )}
+      </Reset>
+
+      <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "8px" }}>
+        <h3>동기화 관계:</h3>
+        <ul>
+          <li><strong>A → B, C</strong>: A가 리렌더링되면 B와 C도 함께 리렌더링</li>
+          <li><strong>B → C, D</strong>: B가 리렌더링되면 C와 D도 함께 리렌더링</li>
+          <li><strong>C</strong>: A와 B 모두의 영향을 받음</li>
+          <li><strong>D</strong>: B의 영향만 받음</li>
+        </ul>
       </div>
     </div>
   ),

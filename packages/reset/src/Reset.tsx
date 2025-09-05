@@ -1,19 +1,30 @@
-import { useEffect, useState } from "react";
-import { subscribeReset, subscribeResetGroup } from "./resetBus";
+import React, { useEffect, useState } from "react";
+import { subscribeReset, subscribeResetGroup, subscribeSync, triggerSync } from "./resetBus";
 
-type Props<T extends string, G extends string = never> = {
-  id: T;
-  groups?: G[];
+type Props = {
+  id: string;
+  groups?: string[];
+  syncWith?: string[];
   children: (reset: () => void, key: number) => React.ReactNode;
 };
 
-export const Reset = <T extends string, G extends string = never>({ 
-  id, 
-  groups = [], 
-  children 
-}: Props<T, G>) => {
+export const Reset = ({
+  id,
+  groups = [],
+  syncWith = [],
+  children
+}: Props) => {
   const [key, setKey] = useState(0);
-  const reset = () => setKey((k) => k + 1);
+  const reset = () => {
+    setKey((k) => k + 1);
+    // reset 함수 호출 시 자동으로 동기화 트리거
+    triggerSync(id);
+  };
+
+  // 컴포넌트가 리렌더링될 때마다 동기화 트리거 (상태 변경 감지)
+  useEffect(() => {
+    triggerSync(id);
+  });
 
   useEffect(() => {
     const unsubscribers: (() => void)[] = [];
@@ -29,10 +40,18 @@ export const Reset = <T extends string, G extends string = never>({
       unsubscribers.push(...unsubscribeGroups);
     }
 
+    // 동기화 구독들 (syncWith가 있을 때만)
+    if (syncWith.length > 0) {
+      const unsubscribeSyncs = syncWith.map(syncId => 
+        subscribeSync(syncId, reset)
+      );
+      unsubscribers.push(...unsubscribeSyncs);
+    }
+
     return () => {
       unsubscribers.forEach(unsubscribe => unsubscribe());
     };
-  }, [id, groups]);
+  }, [id, groups, syncWith]);
 
   return <>{children(reset, key)}</>;
 };
