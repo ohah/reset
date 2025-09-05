@@ -1,0 +1,22 @@
+{
+  "name": "reset",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "@rsbuild/plugin-react": "^1.4.0",
+    "@rspack/cli": "^1.5.2",
+    "@rspack/core": "^1.5.2",
+    "oxlint": "^1.14.0",
+    "rslib": "^0.0.10"
+  }
+}

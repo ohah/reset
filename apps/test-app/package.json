@@ -1,0 +1,21 @@
+{
+  "name": "@reset/test-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "rspack serve",
+    "build": "rspack build",
+    "lint": "oxlint ."
+  },
+  "dependencies": {
+    "@ohah/reset": "workspace:*",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@rspack/plugin-react-refresh": "^1.5.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "react-refresh": "^0.17.0"
+  }
+}
