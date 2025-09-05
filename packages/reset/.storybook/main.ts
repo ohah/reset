@@ -30,38 +30,7 @@ const config: StorybookConfig = {
   },
   typescript: {
     reactDocgen: 'react-docgen-typescript',
-    check: false, // TypeScript 체크 비활성화
-  },
-  webpackFinal: async (config) => {
-    // React 19 호환성을 위한 설정
-    config.resolve = config.resolve || {};
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      'react': require.resolve('react'),
-      'react-dom': require.resolve('react-dom'),
-    };
-    
-    // React 19 호환성을 위한 추가 설정
-    config.module = config.module || {};
-    config.module.rules = config.module.rules || [];
-    
-    // React 19 JSX Transform 지원
-    config.module.rules.push({
-      test: /\.(js|jsx|ts|tsx)$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            ['@babel/preset-env', { targets: { node: 'current' } }],
-            ['@babel/preset-react', { runtime: 'automatic' }],
-            '@babel/preset-typescript',
-          ],
-        },
-      },
-    });
-    
-    return config;
+    check: true,
   },
 };
 
