@@ -1,7 +1,10 @@
 {
   "name": "@ohah/reset",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "A React component reset library with full TypeScript support. Reset individual components by ID or multiple components by group.",
   "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -13,8 +16,39 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "src"
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
   ],
+  "keywords": [
+    "react",
+    "reset",
+    "component",
+    "typescript",
+    "state",
+    "key",
+    "remount",
+    "group",
+    "reset-by-id",
+    "reset-by-group",
+    "react-native",
+    "hooks",
+    "state-management"
+  ],
+  "author": "ohah",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ohah/reset.git"
+  },
+  "homepage": "https://github.com/ohah/reset#readme",
+  "bugs": {
+    "url": "https://github.com/ohah/reset/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "rslib build",
     "build:storybook": "storybook build",
