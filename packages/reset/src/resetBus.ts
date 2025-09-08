@@ -8,6 +8,22 @@ type Events = {
 
 const bus = mitt<Events>();
 
+// 아이디 중복 체크를 위한 전역 상태
+const registeredIds = new Set<string>();
+
+// 아이디 등록 및 중복 체크
+export const registerId = (id: string): void => {
+  if (registeredIds.has(id)) {
+    throw new Error(`Duplicate ID error: '${id}' is already in use. Each Reset component must have a unique ID.`);
+  }
+  registeredIds.add(id);
+};
+
+// 아이디 해제
+export const unregisterId = (id: string): void => {
+  registeredIds.delete(id);
+};
+
 // ID 기반 리셋
 export const resetById = <T extends string>(id: T) => {
   bus.emit("reset", id);
