@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { subscribeReset, subscribeResetGroup, subscribeSync, triggerSync } from "./resetBus";
+import { subscribeReset, subscribeResetGroup, subscribeSync, triggerSync, registerId, unregisterId } from "./resetBus";
 
 type Props = {
   id: string;
@@ -27,6 +27,9 @@ export const Reset = ({
   });
 
   useEffect(() => {
+    // 아이디 등록 및 중복 체크
+    registerId(id);
+
     const unsubscribers: (() => void)[] = [];
 
     // ID 기반 구독 (항상 필수)
@@ -49,9 +52,12 @@ export const Reset = ({
     }
 
     return () => {
+      // 컴포넌트 언마운트 시 아이디 해제
+      unregisterId(id);
       unsubscribers.forEach(unsubscribe => unsubscribe());
     };
   }, [id, groups, syncWith]);
 
   return <>{children(reset, key)}</>;
 };
+
