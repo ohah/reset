@@ -687,6 +687,173 @@ resetByGroup("form")
 triggerSync("master")`}
         </pre>
       </div>
+
+      <h2>6. 아이디 중복 에러 테스트</h2>
+      <p>같은 아이디를 사용하는 컴포넌트가 있으면 에러가 발생합니다.</p>
+      
+      <DuplicateIdTest />
+      
+      <div style={{ 
+        border: "2px solid #ff9800", 
+        padding: "15px", 
+        margin: "10px", 
+        borderRadius: "8px",
+        backgroundColor: "#fff3e0"
+      }}>
+        <h3>중복 아이디 에러 예제</h3>
+        <p>다음과 같이 같은 아이디를 사용하면 에러가 발생합니다:</p>
+        <pre style={{ 
+          backgroundColor: "#f5f5f5", 
+          padding: "10px", 
+          borderRadius: "4px",
+          overflow: "auto"
+        }}>{`// ❌ 에러 발생 - 같은 아이디 사용
+<Reset id="duplicate-id">
+  {(reset, key) => <div key={key}>첫 번째 컴포넌트</div>}
+</Reset>
+
+<Reset id="duplicate-id">  {/* 에러! 같은 아이디 */}
+  {(reset, key) => <div key={key}>두 번째 컴포넌트</div>}
+</Reset>
+
+// ✅ 올바른 사용법 - 고유한 아이디 사용
+<Reset id="component-1">
+  {(reset, key) => <div key={key}>첫 번째 컴포넌트</div>}
+</Reset>
+
+<Reset id="component-2">
+  {(reset, key) => <div key={key}>두 번째 컴포넌트</div>}
+</Reset>`}</pre>
+      </div>
+    </div>
+  );
+}
+
+// 중복 아이디 테스트 컴포넌트
+function DuplicateIdTest() {
+  const [showDuplicate, setShowDuplicate] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const testDuplicateId = () => {
+    setError(null);
+    try {
+      setShowDuplicate(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '알 수 없는 에러가 발생했습니다.');
+    }
+  };
+
+  return (
+    <div style={{ margin: "10px 0" }}>
+      <button 
+        onClick={testDuplicateId}
+        style={{ 
+          padding: "8px 16px", 
+          backgroundColor: "#f44336", 
+          color: "white", 
+          border: "none", 
+          borderRadius: "4px",
+          cursor: "pointer"
+        }}
+      >
+        중복 아이디 에러 테스트 실행
+      </button>
+      {error && (
+        <div style={{ 
+          border: "2px solid #f44336", 
+          padding: "15px", 
+          margin: "10px 0", 
+          borderRadius: "8px",
+          backgroundColor: "#ffebee",
+          color: "#d32f2f"
+        }}>
+          <h4>에러 발생!</h4>
+          <p>{error}</p>
+          <button 
+            onClick={() => {
+              setError(null);
+              setShowDuplicate(false);
+            }}
+            style={{ 
+              padding: "6px 12px", 
+              backgroundColor: "#f44336", 
+              color: "white", 
+              border: "none", 
+              borderRadius: "4px",
+              cursor: "pointer",
+              marginTop: "10px"
+            }}
+          >
+            에러 초기화
+          </button>
+        </div>
+      )}
+      
+      {showDuplicate && !error && (
+        <div>
+          <div style={{ 
+            border: "2px solid #ff9800", 
+            padding: "15px", 
+            margin: "10px 0", 
+            borderRadius: "8px",
+            backgroundColor: "#fff3e0"
+          }}>
+            <h4>중복 아이디 테스트 실행 중...</h4>
+            <p>아래에서 같은 아이디를 사용하는 두 개의 컴포넌트가 렌더링됩니다.</p>
+            <p>두 번째 컴포넌트에서 에러가 발생해야 합니다.</p>
+          </div>
+          
+          {/* 실제 중복 아이디 테스트 */}
+          <div>
+            <Reset id="duplicate-test">
+              {(reset, key) => (
+                <div key={key} style={{ 
+                  border: "1px solid #4caf50", 
+                  padding: "10px", 
+                  margin: "5px",
+                  backgroundColor: "#e8f5e8"
+                }}>
+                  <p>✅ 첫 번째 컴포넌트 (ID: duplicate-test) - 정상 렌더링</p>
+                  <button onClick={reset}>리셋</button>
+                </div>
+              )}
+            </Reset>
+            
+            {/* 이 컴포넌트가 렌더링되면 에러가 발생해야 함 */}
+            <Reset id="duplicate-test">
+              {(reset, key) => (
+                <div key={key} style={{ 
+                  border: "1px solid #f44336", 
+                  padding: "10px", 
+                  margin: "5px",
+                  backgroundColor: "#ffebee"
+                }}>
+                  <p>❌ 두 번째 컴포넌트 (ID: duplicate-test) - 에러 발생!</p>
+                  <button onClick={reset}>리셋</button>
+                </div>
+              )}
+            </Reset>
+          </div>
+          
+          <button 
+            onClick={() => {
+              setShowDuplicate(false);
+              setError(null);
+            }}
+            style={{ 
+              padding: "6px 12px", 
+              backgroundColor: "#6c757d", 
+              color: "white", 
+              border: "none", 
+              borderRadius: "4px",
+              cursor: "pointer",
+              marginTop: "10px"
+            }}
+          >
+            테스트 초기화
+          </button>
+        </div>
+      )}
     </div>
   );
 }
